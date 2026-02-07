@@ -1,0 +1,925 @@
+package view;
+
+import com.toedter.calendar.JDateChooser;
+import controller.ChuyenManHinhController;
+import controller.KhoController;
+import controller.PhieuXuatController;
+import java.awt.Color;
+import java.awt.HeadlessException;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.print.PrinterException;
+import java.math.BigDecimal;
+import java.sql.SQLException;
+import java.util.Date;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JComboBox;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.table.DefaultTableModel;
+import model.PhieuXuat;
+import utils.DataValidator;
+
+/**
+ *
+ * @author khanhnguyen
+ */
+public class PhieuXuatJPanel extends javax.swing.JPanel implements KhoView{
+
+    // Khai báo đối tượng là static
+    private static PhieuXuatJPanel instance = null;
+
+    private final PhieuXuatController phieuXuatController;
+    private final ChuyenManHinhController chuyenManHinhController;
+    private final KhoController khoController;
+    /**
+     * Creates new form TrangChuJPanel
+     *
+     * @throws java.lang.ClassNotFoundException
+     */
+    public PhieuXuatJPanel() throws ClassNotFoundException {
+        initComponents();
+        phieuXuatController = new PhieuXuatController(this);
+        chuyenManHinhController = new ChuyenManHinhController(this);
+        khoController = new KhoController(this);
+
+        loadPhieuXuatData();
+        loadMaSPToComboBox();
+        loadMaKHToComboBox();
+
+        // Bắt sự kiện trường Search
+        jTextFieldSearch.addKeyListener(new java.awt.event.KeyAdapter() {
+            @Override
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                jTextFieldSearchKeyPressed(evt);
+            }
+        });
+
+    }
+
+    public static PhieuXuatJPanel getInstance() throws ClassNotFoundException, SQLException {
+        if (instance == null) {
+            instance = new PhieuXuatJPanel();
+        }
+        return instance;
+    }
+
+    public JPanel getJpnView() {
+        return jpnView;
+    }
+
+    public JTable getjTablePhieuXuat() {
+        return jTablePhieuXuat;
+    }
+
+    public void setjTablePhieuXuat(JTable jTablePhieuXuat) {
+        this.jTablePhieuXuat = jTablePhieuXuat;
+    }
+
+    public JComboBox<String> getjCbMaKH() {
+        return jCbMaKH;
+    }
+
+    public void setjCbMaKH(JComboBox<String> jCbMaKH) {
+        this.jCbMaKH = jCbMaKH;
+    }
+
+    public JComboBox<String> getjCbMaSPXuat() {
+        return jCbMaSPXuat;
+    }
+
+    public void setjCbMaSPXuat(JComboBox<String> jCbMaSPXuat) {
+        this.jCbMaSPXuat = jCbMaSPXuat;
+    }
+
+    public JDateChooser getjDateNgayXuat() {
+        return jDateNgayXuat;
+    }
+
+    public void setjDateNgayXuat(JDateChooser jDateNgayXuat) {
+        this.jDateNgayXuat = jDateNgayXuat;
+    }
+
+    public JTextField getjTextGiaXuat() {
+        return jTextGiaXuat;
+    }
+
+    public void setjTextGiaXuat(JTextField jTextGiaXuat) {
+        this.jTextGiaXuat = jTextGiaXuat;
+    }
+
+    public JTextField getjTextMaXuat() {
+        return jTextMaXuat;
+    }
+
+    public void setjTextMaXuat(JTextField jTextMaXuat) {
+        this.jTextMaXuat = jTextMaXuat;
+    }
+
+    public JTextField getjTextSoLuongXuat() {
+        return jTextSoLuongXuat;
+    }
+
+    public void setjTextSoLuongXuat(JTextField jTextSoLuongXuat) {
+        this.jTextSoLuongXuat = jTextSoLuongXuat;
+    }
+
+    public DefaultTableModel getTableModel() {
+        return (DefaultTableModel) jTablePhieuXuat.getModel();
+    }
+
+    // Load bảng phiếu nhập
+    public void loadPhieuXuatData() throws ClassNotFoundException {
+        List<PhieuXuat> phieuXuatList = phieuXuatController.getAllPhieuXuat();
+        DefaultTableModel model = (DefaultTableModel) jTablePhieuXuat.getModel();
+        model.setRowCount(0);
+
+        for (PhieuXuat phieuXuat : phieuXuatList) {
+            model.addRow(new Object[]{
+                phieuXuat.getMaXuat(),
+                phieuXuat.getMaSP(),
+                phieuXuat.getSoLuong(),
+                phieuXuat.getGiaXuat(),
+                phieuXuat.getNgayXuat(),
+                phieuXuat.getMaKH()
+            });
+        }
+
+    }
+
+    // Xoá các trường
+    private void clearFormField() {
+        jTextMaXuat.setText("");
+        jCbMaSPXuat.setSelectedIndex(0);
+        jTextSoLuongXuat.setText("");
+        jTextGiaXuat.setText("");
+        jDateNgayXuat.setDate(null);
+        jCbMaKH.setSelectedIndex(0);
+    }
+
+    // thêm dữ liệu Mã SP
+    private void loadMaSPToComboBox() {
+        phieuXuatController.loadMaSPToComboBox();
+    }
+
+    // thêm dữ liệu Mã KH
+    private void loadMaKHToComboBox() {
+        phieuXuatController.loadMaKHToComboBox();
+    }
+
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        jpnView = new javax.swing.JPanel();
+        jlbAdd = new javax.swing.JLabel();
+        jlbUpdate = new javax.swing.JLabel();
+        jlbDelete = new javax.swing.JLabel();
+        jlbPrint = new javax.swing.JLabel();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel6 = new javax.swing.JLabel();
+        jLabel7 = new javax.swing.JLabel();
+        jLabel8 = new javax.swing.JLabel();
+        jlbCSV = new javax.swing.JLabel();
+        jLabel10 = new javax.swing.JLabel();
+        jlbExcel = new javax.swing.JLabel();
+        jLabel12 = new javax.swing.JLabel();
+        jCbSearch = new javax.swing.JComboBox<>();
+        jTextFieldSearch = new javax.swing.JTextField();
+        jLabel15 = new javax.swing.JLabel();
+        jlbReset = new javax.swing.JLabel();
+        jTextMinPrice = new javax.swing.JTextField();
+        jLabel16 = new javax.swing.JLabel();
+        jLabel17 = new javax.swing.JLabel();
+        jTextMaxPrice = new javax.swing.JTextField();
+        jButtonFilter = new javax.swing.JButton();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jTablePhieuXuat = new javax.swing.JTable();
+        jPanel4 = new javax.swing.JPanel();
+        jTextMaXuat = new javax.swing.JTextField();
+        jLabel13 = new javax.swing.JLabel();
+        jCbMaKH = new javax.swing.JComboBox<>();
+        jLabel18 = new javax.swing.JLabel();
+        jLabel19 = new javax.swing.JLabel();
+        jDateNgayXuat = new com.toedter.calendar.JDateChooser();
+        jLabel20 = new javax.swing.JLabel();
+        jTextGiaXuat = new javax.swing.JTextField();
+        jLabel21 = new javax.swing.JLabel();
+        jCbMaSPXuat = new javax.swing.JComboBox<>();
+        jLabel22 = new javax.swing.JLabel();
+        jTextSoLuongXuat = new javax.swing.JTextField();
+        jLabel23 = new javax.swing.JLabel();
+
+        jpnView.setBackground(new java.awt.Color(255, 255, 255));
+
+        jlbAdd.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/add.png"))); // NOI18N
+        jlbAdd.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jlbAdd.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jlbAddMouseClicked(evt);
+            }
+        });
+
+        jlbUpdate.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/pencil.png"))); // NOI18N
+        jlbUpdate.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jlbUpdate.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jlbUpdateMouseClicked(evt);
+            }
+        });
+
+        jlbDelete.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/delete.png"))); // NOI18N
+        jlbDelete.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jlbDelete.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jlbDeleteMouseClicked(evt);
+            }
+        });
+
+        jlbPrint.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/printer.png"))); // NOI18N
+        jlbPrint.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jlbPrint.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jlbPrintMouseClicked(evt);
+            }
+        });
+
+        jLabel1.setForeground(new java.awt.Color(51, 51, 255));
+        jLabel1.setText("ADD");
+
+        jLabel6.setForeground(new java.awt.Color(51, 51, 255));
+        jLabel6.setText("EDIT");
+
+        jLabel7.setForeground(new java.awt.Color(51, 51, 255));
+        jLabel7.setText("DELETE");
+
+        jLabel8.setForeground(new java.awt.Color(51, 51, 255));
+        jLabel8.setText("PRINT");
+
+        jlbCSV.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/csv.png"))); // NOI18N
+        jlbCSV.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jlbCSV.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jlbCSVMouseClicked(evt);
+            }
+        });
+
+        jLabel10.setForeground(new java.awt.Color(51, 51, 255));
+        jLabel10.setText("EXCEL");
+
+        jlbExcel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/excel.png"))); // NOI18N
+        jlbExcel.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jlbExcel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jlbExcelMouseClicked(evt);
+            }
+        });
+
+        jLabel12.setForeground(new java.awt.Color(51, 51, 255));
+        jLabel12.setText("CSV");
+
+        jCbSearch.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "All", "Search by SO ID" }));
+
+        jTextFieldSearch.setForeground(new java.awt.Color(204, 204, 204));
+        jTextFieldSearch.setText("Type to search...");
+        jTextFieldSearch.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTextFieldSearchMouseClicked(evt);
+            }
+        });
+        jTextFieldSearch.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                jTextFieldSearchKeyPressed(evt);
+            }
+        });
+
+        jLabel15.setForeground(new java.awt.Color(51, 51, 255));
+        jLabel15.setText("REFRESH");
+
+        jlbReset.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/refresh.png"))); // NOI18N
+        jlbReset.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jlbReset.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jlbResetMouseClicked(evt);
+            }
+        });
+
+        jLabel16.setText("From");
+
+        jLabel17.setText("To");
+
+        jButtonFilter.setFont(new java.awt.Font("Helvetica Neue", 1, 13)); // NOI18N
+        jButtonFilter.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/filter.png"))); // NOI18N
+        jButtonFilter.setText("Price Filter");
+        jButtonFilter.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jButtonFilterMouseClicked(evt);
+            }
+        });
+
+        jTablePhieuXuat.setFont(new java.awt.Font("Helvetica Neue", 0, 10)); // NOI18N
+        jTablePhieuXuat.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null}
+            },
+            new String [] {
+                "SO ID", "Product ID", "Quantity", "Sale Price", "Export ID", "Customer ID"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, true
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jTablePhieuXuat.getTableHeader().setReorderingAllowed(false);
+        jTablePhieuXuat.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTablePhieuXuatMouseClicked(evt);
+            }
+        });
+        jScrollPane2.setViewportView(jTablePhieuXuat);
+
+        jLabel13.setText("SO ID (*)");
+
+        jLabel18.setText("Product ID (*)");
+
+        jLabel19.setText("Customer ID (*)");
+
+        jLabel20.setText("Sale Price(*)");
+
+        jLabel21.setText("Export Date (*)");
+
+        jLabel22.setFont(new java.awt.Font("Helvetica Neue", 1, 13)); // NOI18N
+        jLabel22.setText("Sales Order (SO) Information");
+
+        jTextSoLuongXuat.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                jTextSoLuongXuatKeyReleased(evt);
+            }
+        });
+
+        jLabel23.setText("Quantity (*)");
+
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addGap(78, 78, 78)
+                        .addComponent(jLabel22))
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel4Layout.createSequentialGroup()
+                                .addGap(20, 20, 20)
+                                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel13)
+                                    .addComponent(jLabel18)
+                                    .addComponent(jLabel23)
+                                    .addComponent(jLabel20))
+                                .addGap(9, 9, 9))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel21, javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(jLabel19, javax.swing.GroupLayout.Alignment.TRAILING))))
+                        .addGap(13, 13, 13)
+                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jTextMaXuat)
+                            .addComponent(jCbMaSPXuat, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jTextSoLuongXuat)
+                            .addComponent(jTextGiaXuat)
+                            .addComponent(jDateNgayXuat, javax.swing.GroupLayout.DEFAULT_SIZE, 147, Short.MAX_VALUE)
+                            .addComponent(jCbMaKH, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                .addGap(32, 42, Short.MAX_VALUE))
+        );
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addGap(20, 20, 20)
+                .addComponent(jLabel22)
+                .addGap(35, 35, 35)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel13)
+                    .addComponent(jTextMaXuat, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(22, 22, 22)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jCbMaSPXuat, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel18))
+                .addGap(22, 22, 22)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jTextSoLuongXuat, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel23))
+                .addGap(22, 22, 22)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel20)
+                    .addComponent(jTextGiaXuat, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(22, 22, 22)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel21)
+                    .addComponent(jDateNgayXuat, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(22, 22, 22)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel19)
+                    .addComponent(jCbMaKH, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        javax.swing.GroupLayout jpnViewLayout = new javax.swing.GroupLayout(jpnView);
+        jpnView.setLayout(jpnViewLayout);
+        jpnViewLayout.setHorizontalGroup(
+            jpnViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jpnViewLayout.createSequentialGroup()
+                .addGap(28, 28, 28)
+                .addGroup(jpnViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jlbAdd)
+                    .addComponent(jLabel1))
+                .addGroup(jpnViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jpnViewLayout.createSequentialGroup()
+                        .addGap(16, 16, 16)
+                        .addComponent(jLabel6))
+                    .addGroup(jpnViewLayout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jlbUpdate)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jpnViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jlbDelete)
+                    .addComponent(jLabel7))
+                .addGap(18, 18, 18)
+                .addGroup(jpnViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jlbPrint)
+                    .addComponent(jLabel8))
+                .addGap(18, 18, 18)
+                .addGroup(jpnViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jlbExcel)
+                    .addComponent(jLabel10))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jpnViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jpnViewLayout.createSequentialGroup()
+                        .addGap(6, 6, 6)
+                        .addComponent(jLabel12)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel15)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(jpnViewLayout.createSequentialGroup()
+                        .addComponent(jlbCSV)
+                        .addGap(18, 18, 18)
+                        .addComponent(jlbReset)
+                        .addGap(0, 0, Short.MAX_VALUE))))
+            .addGroup(jpnViewLayout.createSequentialGroup()
+                .addGap(12, 12, 12)
+                .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jpnViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jpnViewLayout.createSequentialGroup()
+                        .addGap(142, 142, 142)
+                        .addComponent(jCbSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jTextFieldSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 280, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jpnViewLayout.createSequentialGroup()
+                        .addGap(138, 138, 138)
+                        .addComponent(jLabel16)
+                        .addGap(18, 18, 18)
+                        .addComponent(jTextMinPrice, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel17)
+                        .addGap(22, 22, 22)
+                        .addComponent(jTextMaxPrice, javax.swing.GroupLayout.PREFERRED_SIZE, 159, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(11, 11, 11)
+                        .addComponent(jButtonFilter))
+                    .addGroup(jpnViewLayout.createSequentialGroup()
+                        .addGap(14, 14, 14)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 683, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(21, 21, 21))
+        );
+        jpnViewLayout.setVerticalGroup(
+            jpnViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jpnViewLayout.createSequentialGroup()
+                .addGap(6, 6, 6)
+                .addGroup(jpnViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jpnViewLayout.createSequentialGroup()
+                        .addComponent(jlbAdd)
+                        .addGap(12, 12, 12)
+                        .addComponent(jLabel1))
+                    .addGroup(jpnViewLayout.createSequentialGroup()
+                        .addGroup(jpnViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jlbUpdate)
+                            .addComponent(jlbDelete))
+                        .addGap(12, 12, 12)
+                        .addGroup(jpnViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel6)
+                            .addComponent(jLabel7)))
+                    .addComponent(jlbPrint)
+                    .addGroup(jpnViewLayout.createSequentialGroup()
+                        .addComponent(jlbExcel)
+                        .addGap(12, 12, 12)
+                        .addGroup(jpnViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel10)
+                            .addComponent(jLabel8)
+                            .addComponent(jLabel12)
+                            .addComponent(jLabel15)))
+                    .addComponent(jlbCSV)
+                    .addComponent(jlbReset, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jpnViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jTextFieldSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jCbSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(41, 41, 41)
+                .addGroup(jpnViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(jpnViewLayout.createSequentialGroup()
+                        .addGroup(jpnViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jpnViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(jTextMinPrice, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jLabel16))
+                            .addGroup(jpnViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(jTextMaxPrice, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jLabel17))
+                            .addComponent(jButtonFilter))
+                        .addGap(18, 18, 18)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 561, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
+        this.setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jpnView, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jpnView, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+    }// </editor-fold>//GEN-END:initComponents
+
+    // Nút làm mới
+    private void jlbResetMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jlbResetMouseClicked
+        try {
+            loadPhieuXuatData();
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(PhieuXuatJPanel.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        clearFormField();
+        jTablePhieuXuat.clearSelection();
+        jTextMaXuat.setEditable(true);
+    }//GEN-LAST:event_jlbResetMouseClicked
+
+    // Ô tìm kiếm
+    private void jTextFieldSearchKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextFieldSearchKeyPressed
+        if (jTextFieldSearch.getText().isEmpty()) {
+            jTextFieldSearch.setText("");
+            jTextFieldSearch.setForeground(Color.BLACK);
+        }
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+            // Lấy giá trị tìm kiếm từ JTextField
+            String searchTerm = jTextFieldSearch.getText().trim();
+
+            // Lấy lựa chọn hiện tại từ ComboBox
+            String selectedOption = (String) jCbSearch.getSelectedItem();
+
+            if (!searchTerm.isEmpty()) {
+                switch (selectedOption) {
+                    case "All": {
+                        try {
+                            phieuXuatController.searchInAllColumns(searchTerm);
+                        } catch (ClassNotFoundException ex) {
+                            Logger.getLogger(PhieuXuatJPanel.class.getName()).log(Level.SEVERE, null, ex);
+                            JOptionPane.showMessageDialog(null, "No results found");
+                        }
+                    }
+                    jTextFieldSearch.setText("");
+                    break;
+                    case "Search by SO ID":
+                        phieuXuatController.searchByMaXuat(searchTerm);
+                        jTextFieldSearch.setText("");
+                        break;
+                    default:
+                        JOptionPane.showMessageDialog(null, "Invalid search selection!");
+                        break;
+                }
+            }
+        }
+    }//GEN-LAST:event_jTextFieldSearchKeyPressed
+
+    // Trường tìm kiếm
+    private void jTextFieldSearchMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextFieldSearchMouseClicked
+        jTextFieldSearch.setText("");
+        jTextFieldSearch.setForeground(Color.BLACK);
+    }//GEN-LAST:event_jTextFieldSearchMouseClicked
+
+    // Nút xuất file excel
+    private void jlbExcelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jlbExcelMouseClicked
+        // Gọi phương thức xuất file Excel
+        phieuXuatController.exportToExcel();
+    }//GEN-LAST:event_jlbExcelMouseClicked
+
+    // Nút xuất file csv
+    private void jlbCSVMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jlbCSVMouseClicked
+        try {
+            // Gọi phương thức xuất file CSV
+            phieuXuatController.exportToCSV();
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(PhieuXuatJPanel.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jlbCSVMouseClicked
+
+    // Nút in bảng
+    private void jlbPrintMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jlbPrintMouseClicked
+        boolean inThanhCong = true;
+        try {
+            inThanhCong = jTablePhieuXuat.print(JTable.PrintMode.FIT_WIDTH, null, null);
+        } catch (PrinterException ex) {
+            Logger.getLogger(PhieuXuatJPanel.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        if (inThanhCong) {
+            JOptionPane.showMessageDialog(null, "Print successful!");
+        } else {
+            JOptionPane.showMessageDialog(null, "Print failed");
+        }
+    }//GEN-LAST:event_jlbPrintMouseClicked
+
+    // Nút xoá
+    private void jlbDeleteMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jlbDeleteMouseClicked
+        // Chọn dòng xoá
+        int selectedRow = jTablePhieuXuat.getSelectedRow();
+
+        // Kiểm tra người dùng đã chọn chưa
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(this, "Please select a row to delete", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        // Lấy MAXUAT từ dòng muốn xoá
+        String maXuat = jTablePhieuXuat.getValueAt(selectedRow, 0).toString();
+
+        // Xác nhận xoá
+        int confirm = JOptionPane.showConfirmDialog(this, "Are you sure you want to delete?", "Notification", JOptionPane.YES_NO_OPTION);
+        if (confirm == JOptionPane.YES_OPTION) {
+            try {
+                PhieuXuat phieuXuat = new PhieuXuat(maXuat, null, 0, BigDecimal.ZERO, null, null);
+
+                // Gọi phương thức xoá
+                phieuXuatController.deletePhieuXuat(phieuXuat);
+
+                // Hiển thị thông báo xoá thành
+                JOptionPane.showMessageDialog(this, "Delete successful");
+
+                // Làm mới bảng
+                loadPhieuXuatData();
+            } catch (HeadlessException | ClassNotFoundException e) {
+                JOptionPane.showMessageDialog(this, ": " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            } catch (SQLException ex) {
+                Logger.getLogger(PhieuXuatJPanel.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }//GEN-LAST:event_jlbDeleteMouseClicked
+
+    // Nút sửa
+    private void jlbUpdateMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jlbUpdateMouseClicked
+        String maXuat = jTextMaXuat.getText();
+        String currentMaXuat = phieuXuatController.getCurrentMaXuat();
+        String maSP = (String) jCbMaSPXuat.getSelectedItem();
+
+        int soLuong;
+        soLuong = Integer.parseInt(jTextSoLuongXuat.getText());
+
+        BigDecimal giaXuat = null;
+        giaXuat = new BigDecimal(jTextGiaXuat.getText());
+
+        Date ngayXuat = jDateNgayXuat.getDate();
+
+        String maKH = (String) jCbMaKH.getSelectedItem();
+
+        // Kiểm tra dữ liệu đã nhập đủ chưa
+        DataValidator.isValidDataPhieuXuat(maXuat, maSP, soLuong, giaXuat, ngayXuat, maKH);
+
+        // Cập nhật thông tin hd
+        try {
+            phieuXuatController.updatePhieuXuat();
+            clearFormField();
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(PhieuXuatJPanel.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jlbUpdateMouseClicked
+
+    // Nút thêm
+    private void jlbAddMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jlbAddMouseClicked
+        String maXuat = jTextMaXuat.getText();
+        String currentMaXuat = phieuXuatController.getCurrentMaXuat();
+        String maSP = (String) jCbMaSPXuat.getSelectedItem();
+
+        int soLuong = 0;
+        soLuong = Integer.parseInt(jTextSoLuongXuat.getText());
+
+        BigDecimal giaXuat = null;
+        giaXuat = new BigDecimal(jTextGiaXuat.getText());
+
+        Date ngayXuat = jDateNgayXuat.getDate();
+
+        String maKH = (String) jCbMaKH.getSelectedItem();
+
+        // Kiểm tra dữ liệu đã nhập đủ chưa
+        DataValidator.isValidDataPhieuXuat(maXuat, maSP, soLuong, giaXuat, ngayXuat, maKH);
+
+        // Kiểm tra mã phiếu xuất có bị trùng không
+        try {
+            if (phieuXuatController.isMaXuatExist(maXuat, currentMaXuat)) {
+                JOptionPane.showMessageDialog(this, "Sales Order ID already exists. Please enter a different ID");
+                return; // Dừng thực hiện nếu mã đã tồn tại
+            }
+        } catch (ClassNotFoundException | SQLException ex) {
+            Logger.getLogger(PhieuXuatJPanel.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(this, "Error checking Sales Order ID");
+            return; 
+        }
+
+        PhieuXuat newPhieuXuat = new PhieuXuat(maXuat, maSP, soLuong, giaXuat, new java.sql.Date(ngayXuat.getTime()), maKH);
+
+        // Thêm phiếu nhập mới
+        try {
+            phieuXuatController.addPhieuXuat(newPhieuXuat);
+            JOptionPane.showMessageDialog(this, "Added successful!");
+
+            // Làm mới bảng và hiển thị lại dữ liệu
+            loadPhieuXuatData();
+
+            // Xóa các trường dữ liệu
+            clearFormField();
+
+        } catch (HeadlessException | ClassNotFoundException ex) {
+            JOptionPane.showMessageDialog(this, "Failed to add Sales Order: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        } catch (SQLException ex) {
+            Logger.getLogger(PhieuXuatJPanel.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jlbAddMouseClicked
+
+    private void jButtonFilterMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButtonFilterMouseClicked
+
+        String minPriceInput = jTextMinPrice.getText();
+        String maxPriceInput = jTextMaxPrice.getText();
+
+        try {
+            // Gọi phương thức lọc theo giá
+            phieuXuatController.filterByPriceRange(minPriceInput, maxPriceInput);
+
+            // Xóa giá trị trong JTextField
+            jTextMinPrice.setText("");
+            jTextMaxPrice.setText("");
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(null, "No results found", "Notification", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }//GEN-LAST:event_jButtonFilterMouseClicked
+
+    private void jTablePhieuXuatMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTablePhieuXuatMouseClicked
+        // Lấy dòng đã chọn
+        int selectedRow = jTablePhieuXuat.getSelectedRow();
+
+        // Kiểm tra dòng đã được chọn
+        if (selectedRow != -1) {
+            // Lấy dữ liệu từ dòng đã chọn và đưa vào các ô nhập liệu
+            String maXuat = (String) jTablePhieuXuat.getValueAt(selectedRow, 0);
+            String maSP = (String) jTablePhieuXuat.getValueAt(selectedRow, 1);
+
+            Integer soLuongValue = (Integer) jTablePhieuXuat.getValueAt(selectedRow, 2);
+            String soLuong = soLuongValue.toString();
+
+            // Chuyển từ kiểu BigDecimal sang String
+            BigDecimal giaXuatValue = (BigDecimal) jTablePhieuXuat.getValueAt(selectedRow, 3);
+            String giaXuat = giaXuatValue.toString();
+
+            Date ngayXuat = (Date) jTablePhieuXuat.getValueAt(selectedRow, 4);
+            String maKH = (String) jTablePhieuXuat.getValueAt(selectedRow, 5);
+
+            // Đưa dữ liệu vào các ô nhập liệu
+            jTextMaXuat.setText(maXuat);
+            jCbMaSPXuat.setSelectedItem(maSP);
+            jTextSoLuongXuat.setText(soLuong);
+            jTextGiaXuat.setText(giaXuat);
+            jDateNgayXuat.setDate(ngayXuat);
+            jCbMaKH.setSelectedItem(maKH);
+
+            // ngăn không chỉnh maXuat
+            jTextMaXuat.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent evt) {
+                    int selectedRow = jTablePhieuXuat.getSelectedRow();
+                    if (selectedRow != -1) {
+                        // Hiển thị thông báo nếu hàng đã được chọn
+                        JOptionPane.showMessageDialog(null, "Sales Order ID already exists. Please enter a different ID", "Warning", JOptionPane.WARNING_MESSAGE);
+                        jTextMaXuat.setText(maXuat);
+                        jTextMaXuat.setEditable(false);
+                    }
+                }
+            });
+
+        }
+
+    }//GEN-LAST:event_jTablePhieuXuatMouseClicked
+
+    private void jTextSoLuongXuatKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextSoLuongXuatKeyReleased
+        // TODO add your handling code here:
+        String text = jTextSoLuongXuat.getText().trim();
+        String maSP =  jCbMaSPXuat.getSelectedItem().toString();
+
+    if (text.isEmpty()) return;
+
+    try {
+        int soLuongXuat = Integer.parseInt(text);
+
+        int soLuongTon = khoController.getSoLuongTon(maSP);
+
+        if (soLuongXuat > soLuongTon) {
+            JOptionPane.showMessageDialog(
+                this,
+                "The exported quantity exceeds the available stock.",
+                "Warning",
+                JOptionPane.WARNING_MESSAGE
+            );
+
+            jTextSoLuongXuat.setText(String.valueOf(soLuongTon));
+        }
+
+    } catch (NumberFormatException e) {
+        JOptionPane.showMessageDialog(
+            this,
+            "Please enter a valid number.",
+            "Warning",
+            JOptionPane.WARNING_MESSAGE
+        );
+        jTextSoLuongXuat.setText("");
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(
+            this,
+            "Error checking stock quantity.",
+            "Error",
+            JOptionPane.ERROR_MESSAGE
+        );
+    }
+    
+    }//GEN-LAST:event_jTextSoLuongXuatKeyReleased
+
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButtonFilter;
+    private javax.swing.JComboBox<String> jCbMaKH;
+    private javax.swing.JComboBox<String> jCbMaSPXuat;
+    private javax.swing.JComboBox<String> jCbSearch;
+    private com.toedter.calendar.JDateChooser jDateNgayXuat;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel12;
+    private javax.swing.JLabel jLabel13;
+    private javax.swing.JLabel jLabel15;
+    private javax.swing.JLabel jLabel16;
+    private javax.swing.JLabel jLabel17;
+    private javax.swing.JLabel jLabel18;
+    private javax.swing.JLabel jLabel19;
+    private javax.swing.JLabel jLabel20;
+    private javax.swing.JLabel jLabel21;
+    private javax.swing.JLabel jLabel22;
+    private javax.swing.JLabel jLabel23;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JPanel jPanel4;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JTable jTablePhieuXuat;
+    private javax.swing.JTextField jTextFieldSearch;
+    private javax.swing.JTextField jTextGiaXuat;
+    private javax.swing.JTextField jTextMaXuat;
+    private javax.swing.JTextField jTextMaxPrice;
+    private javax.swing.JTextField jTextMinPrice;
+    private javax.swing.JTextField jTextSoLuongXuat;
+    private javax.swing.JLabel jlbAdd;
+    private javax.swing.JLabel jlbCSV;
+    private javax.swing.JLabel jlbDelete;
+    private javax.swing.JLabel jlbExcel;
+    private javax.swing.JLabel jlbPrint;
+    private javax.swing.JLabel jlbReset;
+    private javax.swing.JLabel jlbUpdate;
+    private javax.swing.JPanel jpnView;
+    // End of variables declaration//GEN-END:variables
+
+    @Override
+    public void showWarning(String message) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+}

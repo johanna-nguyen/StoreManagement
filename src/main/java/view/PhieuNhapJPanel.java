@@ -1,0 +1,873 @@
+package view;
+
+import com.toedter.calendar.JDateChooser;
+import controller.ChuyenManHinhController;
+import controller.PhieuNhapController;
+import java.awt.Color;
+import java.awt.HeadlessException;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.print.PrinterException;
+import java.math.BigDecimal;
+import java.sql.SQLException;
+import java.util.Date;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JComboBox;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.table.DefaultTableModel;
+import model.PhieuNhap;
+import utils.DataValidator;
+
+/**
+ *
+ * @author khanhnguyen
+ */
+public class PhieuNhapJPanel extends javax.swing.JPanel {
+
+    // Khai báo đối tượng là static
+    private static PhieuNhapJPanel instance = null;
+
+    private final PhieuNhapController phieuNhapController;
+    private final ChuyenManHinhController chuyenManHinhController;
+
+    /**
+     * Creates new form TrangChuJPanel
+     *
+     * @throws java.lang.ClassNotFoundException
+     */
+    public PhieuNhapJPanel() throws ClassNotFoundException {
+        initComponents();
+        phieuNhapController = new PhieuNhapController(this);
+        chuyenManHinhController = new ChuyenManHinhController(this);
+
+        loadPhieuNhapData();
+        loadMaSPToComboBox();
+        loadMaNCCToComboBox();
+
+        // Bắt sự kiện trường Search
+        jTextFieldSearch.addKeyListener(new java.awt.event.KeyAdapter() {
+            @Override
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                jTextFieldSearchKeyPressed(evt);
+            }
+        });
+
+    }
+
+    public static PhieuNhapJPanel getInstance() throws ClassNotFoundException, SQLException {
+        if (instance == null) {
+            instance = new PhieuNhapJPanel();
+        }
+        return instance;
+    }
+
+    public JPanel getJpnView() {
+        return jpnView;
+    }
+
+    public JTable getjTablePhieuNhap() {
+        return jTablePhieuNhap;
+    }
+
+    public void setjTablePhieuNhap(JTable jTablePhieuNhap) {
+        this.jTablePhieuNhap = jTablePhieuNhap;
+    }
+
+    public JComboBox<String> getjCbMaNCC() {
+        return jCbMaNCC;
+    }
+
+    public void setjCbMaNCC(JComboBox<String> jCbMaNCC) {
+        this.jCbMaNCC = jCbMaNCC;
+    }
+
+    public JComboBox<String> getjCbMaSPNhap() {
+        return jCbMaSPNhap;
+    }
+
+    public void setjCbMaSPNhap(JComboBox<String> jCbMaSPNhap) {
+        this.jCbMaSPNhap = jCbMaSPNhap;
+    }
+
+    public JDateChooser getjDateNgayNhap() {
+        return jDateNgayNhap;
+    }
+
+    public void setjDateNgayNhap(JDateChooser jDateNgayNhap) {
+        this.jDateNgayNhap = jDateNgayNhap;
+    }
+
+    public JTextField getjTextGiaNhap() {
+        return jTextGiaNhap;
+    }
+
+    public void setjTextGiaNhap(JTextField jTextGiaNhap) {
+        this.jTextGiaNhap = jTextGiaNhap;
+    }
+
+    public JTextField getjTextMaNhap() {
+        return jTextMaNhap;
+    }
+
+    public void setjTextMaNhap(JTextField jTextMaNhap) {
+        this.jTextMaNhap = jTextMaNhap;
+    }
+
+    public JTextField getjTextSoLuongNhap() {
+        return jTextSoLuongNhap;
+    }
+
+    public void setjTextSoLuongNhap(JTextField jTextSoLuongNhap) {
+        this.jTextSoLuongNhap = jTextSoLuongNhap;
+    }
+
+    public DefaultTableModel getTableModel() {
+        return (DefaultTableModel) jTablePhieuNhap.getModel();
+    }
+
+    // Load bảng phiếu nhập
+    public void loadPhieuNhapData() throws ClassNotFoundException {
+        List<PhieuNhap> phieuNhapList = phieuNhapController.getAllPhieuNhap();
+        DefaultTableModel model = (DefaultTableModel) jTablePhieuNhap.getModel();
+        model.setRowCount(0);
+
+        for (PhieuNhap phieuNhap : phieuNhapList) {
+            model.addRow(new Object[]{
+                phieuNhap.getMaNhap(),
+                phieuNhap.getMaSP(),
+                phieuNhap.getSoLuong(),
+                phieuNhap.getGiaNhap(),
+                phieuNhap.getNgayNhap(),
+                phieuNhap.getMaNCC()
+            });
+        }
+
+    }
+
+    // Xoá các trường
+    private void clearFormField() {
+        jTextMaNhap.setText("");
+        jCbMaSPNhap.setSelectedIndex(0);
+        jTextSoLuongNhap.setText("");
+        jTextGiaNhap.setText("");
+        jDateNgayNhap.setDate(null);
+        jCbMaNCC.setSelectedIndex(0);
+    }
+
+    // thêm dữ liệu Mã SP
+    private void loadMaSPToComboBox() {
+        phieuNhapController.loadMaSPToComboBox();
+    }
+
+    // thêm dữ liệu Mã NCC
+    private void loadMaNCCToComboBox() {
+        phieuNhapController.loadMaNCCToComboBox();
+    }
+
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        jpnView = new javax.swing.JPanel();
+        jlbAdd = new javax.swing.JLabel();
+        jlbUpdate = new javax.swing.JLabel();
+        jlbDelete = new javax.swing.JLabel();
+        jlbPrint = new javax.swing.JLabel();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel6 = new javax.swing.JLabel();
+        jLabel7 = new javax.swing.JLabel();
+        jLabel8 = new javax.swing.JLabel();
+        jlbCSV = new javax.swing.JLabel();
+        jLabel10 = new javax.swing.JLabel();
+        jlbExcel = new javax.swing.JLabel();
+        jLabel12 = new javax.swing.JLabel();
+        jCbSearch = new javax.swing.JComboBox<>();
+        jTextFieldSearch = new javax.swing.JTextField();
+        jLabel15 = new javax.swing.JLabel();
+        jlbReset = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTablePhieuNhap = new javax.swing.JTable();
+        jPanel3 = new javax.swing.JPanel();
+        jTextMaNhap = new javax.swing.JTextField();
+        jLabel2 = new javax.swing.JLabel();
+        jCbMaNCC = new javax.swing.JComboBox<>();
+        jLabel4 = new javax.swing.JLabel();
+        jLabel11 = new javax.swing.JLabel();
+        jDateNgayNhap = new com.toedter.calendar.JDateChooser();
+        jLabel5 = new javax.swing.JLabel();
+        jTextGiaNhap = new javax.swing.JTextField();
+        jLabel14 = new javax.swing.JLabel();
+        jCbMaSPNhap = new javax.swing.JComboBox<>();
+        jLabel3 = new javax.swing.JLabel();
+        jTextSoLuongNhap = new javax.swing.JTextField();
+        jLabel9 = new javax.swing.JLabel();
+        jTextMinPrice = new javax.swing.JTextField();
+        jLabel16 = new javax.swing.JLabel();
+        jLabel17 = new javax.swing.JLabel();
+        jTextMaxPrice = new javax.swing.JTextField();
+        jButtonFilter = new javax.swing.JButton();
+
+        jpnView.setBackground(new java.awt.Color(255, 255, 255));
+
+        jlbAdd.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/add.png"))); // NOI18N
+        jlbAdd.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jlbAdd.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jlbAddMouseClicked(evt);
+            }
+        });
+
+        jlbUpdate.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/pencil.png"))); // NOI18N
+        jlbUpdate.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jlbUpdate.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jlbUpdateMouseClicked(evt);
+            }
+        });
+
+        jlbDelete.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/delete.png"))); // NOI18N
+        jlbDelete.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jlbDelete.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jlbDeleteMouseClicked(evt);
+            }
+        });
+
+        jlbPrint.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/printer.png"))); // NOI18N
+        jlbPrint.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jlbPrint.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jlbPrintMouseClicked(evt);
+            }
+        });
+
+        jLabel1.setForeground(new java.awt.Color(51, 51, 255));
+        jLabel1.setText("ADD");
+
+        jLabel6.setForeground(new java.awt.Color(51, 51, 255));
+        jLabel6.setText("EDIT");
+
+        jLabel7.setForeground(new java.awt.Color(51, 51, 255));
+        jLabel7.setText("DELETE");
+
+        jLabel8.setForeground(new java.awt.Color(51, 51, 255));
+        jLabel8.setText("PRINT");
+
+        jlbCSV.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/csv.png"))); // NOI18N
+        jlbCSV.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jlbCSV.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jlbCSVMouseClicked(evt);
+            }
+        });
+
+        jLabel10.setForeground(new java.awt.Color(51, 51, 255));
+        jLabel10.setText("EXCEL");
+
+        jlbExcel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/excel.png"))); // NOI18N
+        jlbExcel.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jlbExcel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jlbExcelMouseClicked(evt);
+            }
+        });
+
+        jLabel12.setForeground(new java.awt.Color(51, 51, 255));
+        jLabel12.setText("CSV");
+
+        jCbSearch.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "All", "Search by PO ID", " " }));
+
+        jTextFieldSearch.setForeground(new java.awt.Color(204, 204, 204));
+        jTextFieldSearch.setText("Type to search...");
+        jTextFieldSearch.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTextFieldSearchMouseClicked(evt);
+            }
+        });
+        jTextFieldSearch.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                jTextFieldSearchKeyPressed(evt);
+            }
+        });
+
+        jLabel15.setForeground(new java.awt.Color(51, 51, 255));
+        jLabel15.setText("REFRESH");
+
+        jlbReset.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/refresh.png"))); // NOI18N
+        jlbReset.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jlbReset.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jlbResetMouseClicked(evt);
+            }
+        });
+
+        jTablePhieuNhap.setFont(new java.awt.Font("Helvetica Neue", 0, 10)); // NOI18N
+        jTablePhieuNhap.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null}
+            },
+            new String [] {
+                "PO ID", "Product ID", "Quantity", "Purchase Price", "Import Date", "Supplier ID"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, true
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jTablePhieuNhap.getTableHeader().setReorderingAllowed(false);
+        jTablePhieuNhap.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTablePhieuNhapMouseClicked(evt);
+            }
+        });
+        jScrollPane1.setViewportView(jTablePhieuNhap);
+
+        jLabel2.setText("PO ID (*)");
+
+        jLabel4.setText("Product ID (*)");
+
+        jLabel11.setText("Supplier ID (*)");
+
+        jLabel5.setText("Purchase Price (*)");
+
+        jLabel14.setText("Import Date (*)");
+
+        jLabel3.setFont(new java.awt.Font("Helvetica Neue", 1, 13)); // NOI18N
+        jLabel3.setText("Purchase Order (PO) Information");
+
+        jLabel9.setText("Quantity (*)");
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGap(20, 20, 20)
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel4)
+                            .addComponent(jLabel9)
+                            .addComponent(jLabel5)
+                            .addComponent(jLabel14)
+                            .addComponent(jLabel11))
+                        .addGap(18, 18, 18)
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jDateNgayNhap, javax.swing.GroupLayout.DEFAULT_SIZE, 147, Short.MAX_VALUE)
+                            .addComponent(jCbMaSPNhap, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jTextMaNhap)
+                            .addComponent(jTextGiaNhap)
+                            .addComponent(jCbMaNCC, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jTextSoLuongNhap)))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGap(39, 39, 39)
+                        .addComponent(jLabel3)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addGap(20, 20, 20)
+                .addComponent(jLabel3)
+                .addGap(35, 35, 35)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel2)
+                    .addComponent(jTextMaNhap, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(22, 22, 22)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jCbMaSPNhap, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel4))
+                .addGap(22, 22, 22)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jTextSoLuongNhap, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel9))
+                .addGap(22, 22, 22)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel5)
+                    .addComponent(jTextGiaNhap, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jDateNgayNhap, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel14))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel11)
+                    .addComponent(jCbMaNCC, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(279, Short.MAX_VALUE))
+        );
+
+        jLabel16.setText("From");
+
+        jLabel17.setText("To");
+
+        jButtonFilter.setFont(new java.awt.Font("Helvetica Neue", 1, 13)); // NOI18N
+        jButtonFilter.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/filter.png"))); // NOI18N
+        jButtonFilter.setText("Price Filter");
+        jButtonFilter.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jButtonFilterMouseClicked(evt);
+            }
+        });
+        jButtonFilter.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonFilterActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jpnViewLayout = new javax.swing.GroupLayout(jpnView);
+        jpnView.setLayout(jpnViewLayout);
+        jpnViewLayout.setHorizontalGroup(
+            jpnViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jpnViewLayout.createSequentialGroup()
+                .addGap(28, 28, 28)
+                .addGroup(jpnViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jpnViewLayout.createSequentialGroup()
+                        .addComponent(jlbAdd)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jlbUpdate)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jlbDelete)
+                        .addGap(24, 24, 24)
+                        .addComponent(jlbPrint)
+                        .addGap(18, 18, 18)
+                        .addComponent(jlbExcel)
+                        .addGap(12, 12, 12)
+                        .addComponent(jlbCSV)
+                        .addGap(18, 18, 18)
+                        .addComponent(jlbReset))
+                    .addGroup(jpnViewLayout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel6)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel7)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jLabel8)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel10)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jLabel12)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jLabel15)))
+                .addContainerGap(699, Short.MAX_VALUE))
+            .addGroup(jpnViewLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jpnViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jpnViewLayout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 149, Short.MAX_VALUE)
+                        .addGroup(jpnViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jCbSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(jpnViewLayout.createSequentialGroup()
+                                .addComponent(jLabel16)
+                                .addGap(18, 18, 18)
+                                .addComponent(jTextMinPrice, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(jpnViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jpnViewLayout.createSequentialGroup()
+                                .addComponent(jLabel17)
+                                .addGap(22, 22, 22)
+                                .addComponent(jTextMaxPrice, javax.swing.GroupLayout.PREFERRED_SIZE, 159, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(11, 11, 11)
+                                .addComponent(jButtonFilter))
+                            .addComponent(jTextFieldSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 280, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(74, 74, 74))
+                    .addGroup(jpnViewLayout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 695, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+        );
+        jpnViewLayout.setVerticalGroup(
+            jpnViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jpnViewLayout.createSequentialGroup()
+                .addGroup(jpnViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jpnViewLayout.createSequentialGroup()
+                        .addGroup(jpnViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jpnViewLayout.createSequentialGroup()
+                                .addGap(6, 6, 6)
+                                .addGroup(jpnViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jlbAdd)
+                                    .addComponent(jlbUpdate)
+                                    .addComponent(jlbDelete)
+                                    .addComponent(jlbPrint)
+                                    .addComponent(jlbExcel)))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jpnViewLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(jpnViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jlbReset, javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(jlbCSV, javax.swing.GroupLayout.Alignment.TRAILING))))
+                        .addGap(9, 9, 9)
+                        .addGroup(jpnViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jpnViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(jLabel1)
+                                .addComponent(jLabel6)
+                                .addComponent(jLabel7)
+                                .addComponent(jLabel8))
+                            .addGroup(jpnViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(jLabel10)
+                                .addComponent(jLabel12)
+                                .addComponent(jLabel15))))
+                    .addGroup(jpnViewLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(jpnViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jTextFieldSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jCbSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addGap(37, 37, 37)
+                .addGroup(jpnViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jpnViewLayout.createSequentialGroup()
+                        .addGroup(jpnViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jpnViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(jTextMinPrice, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jLabel16))
+                            .addGroup(jpnViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(jTextMaxPrice, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jLabel17))
+                            .addComponent(jButtonFilter))
+                        .addGap(18, 18, 18)
+                        .addComponent(jScrollPane1)))
+                .addContainerGap())
+        );
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
+        this.setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jpnView, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jpnView, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void jButtonFilterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonFilterActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButtonFilterActionPerformed
+
+    private void jButtonFilterMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButtonFilterMouseClicked
+
+        String minPriceInput = jTextMinPrice.getText();
+        String maxPriceInput = jTextMaxPrice.getText();
+
+        try {
+            // Gọi phương thức lọc theo giá
+            phieuNhapController.filterByPriceRange(minPriceInput, maxPriceInput);
+
+            // Xóa giá trị trong JTextField
+            jTextMinPrice.setText("");
+            jTextMaxPrice.setText("");
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(null, "No results found", "Notification", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }//GEN-LAST:event_jButtonFilterMouseClicked
+
+    private void jTablePhieuNhapMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTablePhieuNhapMouseClicked
+        // Lấy dòng đã chọn
+        int selectedRow = jTablePhieuNhap.getSelectedRow();
+
+        // Kiểm tra dòng đã được chọn
+        if (selectedRow != -1) {
+            // Lấy dữ liệu từ dòng đã chọn và đưa vào các ô nhập liệu
+            String maNhap = (String) jTablePhieuNhap.getValueAt(selectedRow, 0);
+            String maSP = (String) jTablePhieuNhap.getValueAt(selectedRow, 1);
+
+            Integer soLuongValue = (Integer) jTablePhieuNhap.getValueAt(selectedRow, 2);
+            String soLuong = soLuongValue.toString();
+
+            // Chuyển từ kiểu BigDecimal sang String
+            BigDecimal giaNhapValue = (BigDecimal) jTablePhieuNhap.getValueAt(selectedRow, 3);
+            String giaNhap = giaNhapValue.toString();
+
+            Date ngayNhap = (Date) jTablePhieuNhap.getValueAt(selectedRow, 4);
+            String maNCC = (String) jTablePhieuNhap.getValueAt(selectedRow, 5);
+
+            // Đưa dữ liệu vào các ô nhập liệu
+            jTextMaNhap.setText(maNhap);
+            jCbMaSPNhap.setSelectedItem(maSP);
+            jTextSoLuongNhap.setText(soLuong);
+            jTextGiaNhap.setText(giaNhap);
+            jDateNgayNhap.setDate(ngayNhap);
+            jCbMaNCC.setSelectedItem(maNCC);
+
+            // ngăn không chỉnh maNhap
+            jTextMaNhap.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent evt) {
+                    int selectedRow = jTablePhieuNhap.getSelectedRow();
+                    if (selectedRow != -1) {
+                        // Hiển thị thông báo nếu hàng đã được chọn
+                        JOptionPane.showMessageDialog(null, "You do not have permission to edit the Purchase Order ID", "Warning", JOptionPane.WARNING_MESSAGE);
+                        jTextMaNhap.setText(maNhap);
+                        jTextMaNhap.setEditable(false);
+                    }
+                }
+            });
+
+        }
+    }//GEN-LAST:event_jTablePhieuNhapMouseClicked
+
+    // Nút làm mới
+    private void jlbResetMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jlbResetMouseClicked
+        try {
+            loadPhieuNhapData();
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(PhieuNhapJPanel.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        clearFormField();
+        jTablePhieuNhap.clearSelection();
+        jTextMaNhap.setEditable(true);
+    }//GEN-LAST:event_jlbResetMouseClicked
+
+    // Ô tìm kiếm
+    private void jTextFieldSearchKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextFieldSearchKeyPressed
+        if (jTextFieldSearch.getText().isEmpty()) {
+            jTextFieldSearch.setText("");
+            jTextFieldSearch.setForeground(Color.BLACK);
+        }
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+            // Lấy giá trị tìm kiếm từ JTextField
+            String searchTerm = jTextFieldSearch.getText().trim();
+
+            // Lấy lựa chọn hiện tại từ ComboBox
+            String selectedOption = (String) jCbSearch.getSelectedItem();
+
+            if (!searchTerm.isEmpty()) {
+                switch (selectedOption) {
+                    case "All": {
+                        try {
+                            phieuNhapController.searchInAllColumns(searchTerm);
+                        } catch (ClassNotFoundException ex) {
+                            Logger.getLogger(PhieuNhapJPanel.class.getName()).log(Level.SEVERE, null, ex);
+                            JOptionPane.showMessageDialog(null, "No results found");
+                        }
+                    }
+                    jTextFieldSearch.setText("");
+                    break;
+                    case "Search by PO ID":
+                    phieuNhapController.searchByMaNhap(searchTerm);
+                    jTextFieldSearch.setText("");
+                    break;
+                    default:
+                    JOptionPane.showMessageDialog(null, "Invalid search selection!");
+                    break;
+                }
+            }
+        }
+    }//GEN-LAST:event_jTextFieldSearchKeyPressed
+
+    // Trường tìm kiếm
+    private void jTextFieldSearchMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextFieldSearchMouseClicked
+        jTextFieldSearch.setText("");
+        jTextFieldSearch.setForeground(Color.BLACK);
+    }//GEN-LAST:event_jTextFieldSearchMouseClicked
+
+    // Nút xuất file excel
+    private void jlbExcelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jlbExcelMouseClicked
+        // Gọi phương thức xuất file Excel
+        phieuNhapController.exportToExcel();
+    }//GEN-LAST:event_jlbExcelMouseClicked
+
+    // Nút xuất file csv
+    private void jlbCSVMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jlbCSVMouseClicked
+        try {
+            // Gọi phương thức xuất file CSV
+            phieuNhapController.exportToCSV();
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(PhieuNhapJPanel.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jlbCSVMouseClicked
+
+    // Nút in bảng
+    private void jlbPrintMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jlbPrintMouseClicked
+        boolean inThanhCong = true;
+        try {
+            inThanhCong = jTablePhieuNhap.print(JTable.PrintMode.FIT_WIDTH, null, null);
+        } catch (PrinterException ex) {
+            Logger.getLogger(PhieuNhapJPanel.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        if (inThanhCong) {
+            JOptionPane.showMessageDialog(null, "Print successful!");
+        } else {
+            JOptionPane.showMessageDialog(null, "Print failed");
+        }
+    }//GEN-LAST:event_jlbPrintMouseClicked
+
+    // Nút xoá
+    private void jlbDeleteMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jlbDeleteMouseClicked
+        // Chọn dòng xoá
+        int selectedRow = jTablePhieuNhap.getSelectedRow();
+
+        // Kiểm tra người dùng đã chọn chưa
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(this, "Please select a row to update", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        // Lấy MANHAP từ dòng muốn xoá
+        String maNhap = jTablePhieuNhap.getValueAt(selectedRow, 0).toString();
+
+        // Xác nhận xoá
+        int confirm = JOptionPane.showConfirmDialog(this, "Are you sure you want to delete?", "Notification", JOptionPane.YES_NO_OPTION);
+        if (confirm == JOptionPane.YES_OPTION) {
+            try {
+                PhieuNhap phieuNhap = new PhieuNhap(maNhap, null, 0, BigDecimal.ZERO, null, null);
+
+                // Gọi phương thức xoá
+                phieuNhapController.deletePhieuNhap(phieuNhap);
+
+                // Hiển thị thông báo xoá thành
+                JOptionPane.showMessageDialog(this, "Deleted successful");
+
+                // Làm mới bảng
+                loadPhieuNhapData();
+            } catch (HeadlessException | ClassNotFoundException e) {
+                JOptionPane.showMessageDialog(this, ": " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            } catch (SQLException ex) {
+                Logger.getLogger(PhieuNhapJPanel.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }//GEN-LAST:event_jlbDeleteMouseClicked
+
+    // Nút sửa
+    private void jlbUpdateMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jlbUpdateMouseClicked
+        String maNhap = jTextMaNhap.getText();
+        String currentMaNhap = phieuNhapController.getCurrentMaNhap();
+        String maSP = (String) jCbMaSPNhap.getSelectedItem();
+
+        int soLuong = 0;
+        soLuong = Integer.parseInt(jTextSoLuongNhap.getText());
+
+        BigDecimal giaNhap = null;
+        giaNhap = new BigDecimal(jTextGiaNhap.getText());
+
+        Date ngayHD = jDateNgayNhap.getDate();
+
+        String maNCC = (String) jCbMaNCC.getSelectedItem();
+
+        // Kiểm tra dữ liệu đã nhập đủ chưa
+        DataValidator.isValidDataPhieuNhap(maNhap, maSP, soLuong, giaNhap, ngayHD, maNCC);
+
+        // Cập nhật thông tin hd
+        try {
+            phieuNhapController.updatePhieuNhap();
+            clearFormField();
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(PhieuNhapJPanel.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jlbUpdateMouseClicked
+
+    // Nút thêm
+    private void jlbAddMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jlbAddMouseClicked
+        String maNhap = jTextMaNhap.getText();
+        String currentMaNhap = phieuNhapController.getCurrentMaNhap();
+        String maSP = (String) jCbMaSPNhap.getSelectedItem();
+
+        int soLuong = 0;
+        soLuong = Integer.parseInt(jTextSoLuongNhap.getText());
+
+        BigDecimal giaNhap = null;
+        giaNhap = new BigDecimal(jTextGiaNhap.getText());
+
+        Date ngayNhap = jDateNgayNhap.getDate();
+
+        String maNCC = (String) jCbMaNCC.getSelectedItem();
+
+        // Kiểm tra dữ liệu đã nhập đủ chưa
+        DataValidator.isValidDataPhieuNhap(maNhap, maSP, soLuong, giaNhap, ngayNhap, maNCC);
+
+        // Kiểm tra mã phiếu nhập có bị trùng không
+        try {
+            if (phieuNhapController.isMaNhapExist(maNhap, currentMaNhap)) {
+                JOptionPane.showMessageDialog(this, "Purchase Order ID already exists. Please enter a different ID");
+                return; // Dừng thực hiện nếu mã đã tồn tại
+            }
+        } catch (ClassNotFoundException | SQLException ex) {
+            Logger.getLogger(PhieuNhapJPanel.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(this, "Error checking Purchase Order ID");
+            return; 
+        }
+
+        PhieuNhap newPhieuNhap = new PhieuNhap(maNhap, maSP, soLuong, giaNhap, new java.sql.Date(ngayNhap.getTime()), maNCC);
+
+        // Thêm phiếu nhập mới
+        try {
+            phieuNhapController.addPhieuNhap(newPhieuNhap);
+            JOptionPane.showMessageDialog(this, "Added successful!");
+
+            // Làm mới bảng và hiển thị lại dữ liệu
+            loadPhieuNhapData();
+
+            // Xóa các trường dữ liệu
+            clearFormField();
+
+        } catch (HeadlessException | ClassNotFoundException ex) {
+            JOptionPane.showMessageDialog(this, "Failed to add the invoice.: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        } catch (SQLException ex) {
+            Logger.getLogger(PhieuNhapJPanel.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jlbAddMouseClicked
+
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButtonFilter;
+    private javax.swing.JComboBox<String> jCbMaNCC;
+    private javax.swing.JComboBox<String> jCbMaSPNhap;
+    private javax.swing.JComboBox<String> jCbSearch;
+    private com.toedter.calendar.JDateChooser jDateNgayNhap;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
+    private javax.swing.JLabel jLabel14;
+    private javax.swing.JLabel jLabel15;
+    private javax.swing.JLabel jLabel16;
+    private javax.swing.JLabel jLabel17;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
+    private javax.swing.JPanel jPanel3;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTable jTablePhieuNhap;
+    private javax.swing.JTextField jTextFieldSearch;
+    private javax.swing.JTextField jTextGiaNhap;
+    private javax.swing.JTextField jTextMaNhap;
+    private javax.swing.JTextField jTextMaxPrice;
+    private javax.swing.JTextField jTextMinPrice;
+    private javax.swing.JTextField jTextSoLuongNhap;
+    private javax.swing.JLabel jlbAdd;
+    private javax.swing.JLabel jlbCSV;
+    private javax.swing.JLabel jlbDelete;
+    private javax.swing.JLabel jlbExcel;
+    private javax.swing.JLabel jlbPrint;
+    private javax.swing.JLabel jlbReset;
+    private javax.swing.JLabel jlbUpdate;
+    private javax.swing.JPanel jpnView;
+    // End of variables declaration//GEN-END:variables
+}
