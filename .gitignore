@@ -1,0 +1,19 @@
+# ===== Java =====
+*.class
+*.log
+*.jar
+target/
+
+# ===== IDE =====
+.idea/
+.vscode/
+*.iml
+nbproject/private/
+
+# ===== Config & Secret =====
+config.properties
+.env
+
+# ===== OS =====
+.DS_Store
+Thumbs.db
