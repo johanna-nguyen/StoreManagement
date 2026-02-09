@@ -5,6 +5,10 @@ The project is built using Java Swing, MySQL, and follows the MVC (Modelâ€“Viewâ
 
 ---
 
+# Link demo: 
+- English: https://youtu.be/Sp2hFBOXbq0?si=To7GYjGK_fVaBotU
+- French: https://youtu.be/sp5ptgsmKKc?si=C1Cao8pRw9Y_5bBO
+
 # Features
 
 - User authentication (Login / Role-based access)
