@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  */
 
-package com.labellparis.baidoandemo;
+package com.labellparis.storemanagement;
 
 import java.sql.SQLException;
 import view.DangNhapUI;
